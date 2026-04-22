@@ -282,7 +282,7 @@ const products = [
     original: 12900,
     discount: 26,
     unit: "3kg",
-    image: "https://images.unsplash.com/photo-1544889980-d15efad9ec23?auto=format&fit=crop&w=900&q=80",
+    image: "https://upload.wikimedia.org/wikipedia/commons/4/41/Raw_sweet_potato.jpg",
     origin: "전남 해남",
     storage: "서늘한 실온 보관",
     delivery: "큐어링 후 선별 출고",
