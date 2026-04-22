@@ -30,7 +30,7 @@ function getCartTotals() {
 
 const productImage = (product, className = "product-photo") => `
   <figure class="${className}">
-    <img src="${product.image}" alt="${product.name}" loading="lazy" />
+    <img src="${product.image}" alt="${product.name}" />
   </figure>
 `;
 
