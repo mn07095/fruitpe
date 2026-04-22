@@ -123,12 +123,19 @@ function openMenu() {
     drawer.innerHTML = `
       <div class="drawer-panel">
         <button type="button" class="drawer-close" aria-label="닫기">×</button>
-        <strong>프루피 바로가기</strong>
-        <a href="./category.html?type=fruit">과일 신상품</a>
-        <a href="./category.html?type=vegetable">채소 산지직송</a>
-        <a href="./index.html#sale">오늘의 타임특가</a>
+        <strong>프루피 장터</strong>
+        <p>산지직송 특가와 제철 추천을 빠르게 둘러보세요.</p>
+        <div class="drawer-highlight">
+          <span>친구 초대 리워드</span>
+          <b>3,000P 적립</b>
+          <button type="button" data-reward-copy>URL 복사</button>
+        </div>
+        <a href="./index.html#season">타임특가</a>
+        <a href="./index.html#pick">프루피픽</a>
+        <a href="./category.html?type=fruit">과일특집</a>
+        <a href="./category.html?type=vegetable">채소특집</a>
         <a href="./wishlist.html">찜한상품</a>
-        <a href="./mypage.html">멤버십 혜택</a>
+        <a href="./mypage.html">이벤트/멤버십</a>
       </div>
     `;
     document.body.appendChild(drawer);
@@ -362,6 +369,7 @@ document.addEventListener("click", (event) => {
   const cartRemove = target.closest?.("[data-cart-remove]");
   const cartClear = target.closest?.("[data-cart-clear]");
   const couponApply = target.closest?.("[data-coupon-apply]");
+  const rewardCopy = target.closest?.("[data-reward-copy]");
 
   if (menuButton) openMenu();
   if (couponButton) {
@@ -380,6 +388,10 @@ document.addEventListener("click", (event) => {
     localStorage.setItem(couponKey, "true");
     showToast("첫 구매 쿠폰을 적용했어요.");
     renderCart();
+  }
+  if (rewardCopy) {
+    navigator.clipboard?.writeText(location.origin + location.pathname);
+    showToast("리워드 URL을 복사했어요.");
   }
 });
 
