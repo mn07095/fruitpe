@@ -159,12 +159,42 @@ function renderHome() {
 }
 
 function renderCategory() {
+  const view = document.body.dataset.view;
   const type = params.get("type");
-  const filtered = type ? products.filter((item) => item.type === type) : products;
-  const title = type === "fruit" ? "과일" : type === "vegetable" ? "채소" : "전체 상품";
-  document.querySelector("#categoryTitle").textContent = title;
+  let filtered = type ? products.filter((item) => item.type === type) : products;
+  let title = type === "fruit" ? "과일" : type === "vegetable" ? "채소" : "전체 상품";
+
+  if (view === "time-sale") {
+    filtered = products.filter((item) => item.badge === "deal").sort((a, b) => b.discount - a.discount);
+    title = "타임특가";
+    startDealTimer();
+  }
+  if (view === "pick") {
+    filtered = [...products].sort((a, b) => (b.rating - a.rating) || (b.reviewCount - a.reviewCount)).slice(0, 8);
+    title = "프루피픽";
+  }
+
+  const titleEl = document.querySelector("#categoryTitle");
+  if (titleEl) titleEl.textContent = title;
   document.querySelector("#productCount").textContent = `상품 ${filtered.length}개`;
   document.querySelector("#categoryProducts").innerHTML = filtered.map(card).join("");
+}
+
+function startDealTimer() {
+  const timer = document.querySelector("#dealTimer");
+  if (!timer) return;
+  const tick = () => {
+    const now = new Date();
+    const end = new Date(now);
+    end.setHours(23, 59, 59, 999);
+    const diff = Math.max(0, end - now);
+    const h = String(Math.floor(diff / 3600000)).padStart(2, "0");
+    const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+    timer.textContent = `${h}:${m}:${s}`;
+  };
+  tick();
+  setInterval(tick, 1000);
 }
 
 function renderProduct() {
@@ -356,6 +386,33 @@ function renderWishlist() {
   box.innerHTML = items.map(listItem).join("");
 }
 
+function renderSearch() {
+  const input = document.querySelector("#searchInput");
+  const box = document.querySelector("#searchProducts");
+  const count = document.querySelector("#searchCount");
+  const draw = () => {
+    const keyword = input.value.trim().toLowerCase();
+    const result = keyword
+      ? products.filter((item) => `${item.name} ${item.subtitle} ${item.origin}`.toLowerCase().includes(keyword))
+      : products.slice(0, 6);
+    count.textContent = keyword ? `검색 결과 ${result.length}개` : "추천 상품";
+    box.innerHTML = result.length ? result.map(card).join("") : `
+      <div class="empty-box">
+        <strong>검색 결과가 없어요.</strong>
+        <p>다른 과일이나 채소 이름으로 검색해보세요.</p>
+      </div>
+    `;
+  };
+  input.addEventListener("input", draw);
+  document.querySelectorAll(".popular-keywords button").forEach((button) => {
+    button.addEventListener("click", () => {
+      input.value = button.textContent;
+      draw();
+    });
+  });
+  draw();
+}
+
 document.addEventListener("click", (event) => {
   const target = event.target;
   const menuButton = target.closest?.('button[aria-label="메뉴"]');
@@ -402,3 +459,4 @@ if (page === "product") renderProduct();
 if (page === "cart") renderCart();
 if (page === "checkout") renderCheckout();
 if (page === "wishlist") renderWishlist();
+if (page === "search") renderSearch();

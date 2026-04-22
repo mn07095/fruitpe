@@ -15,7 +15,7 @@
 body {
   margin: 0;
   background: #fffdf8;
-  padding-bottom: 78px;
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
 }
 
 body.drawer-locked {
@@ -60,6 +60,12 @@ textarea {
   gap: 8px;
   font-size: 20px;
   font-weight: 900;
+}
+
+.brand-logo {
+  width: 42px;
+  height: 30px;
+  object-fit: contain;
 }
 
 .brand-compact {
@@ -271,6 +277,138 @@ textarea {
 .coupon-band button:disabled {
   color: #6b6257;
   background: #efe9dc;
+}
+
+.deal-head {
+  background: linear-gradient(145deg, #141414, #43331f);
+  color: #fff;
+}
+
+.deal-head p {
+  color: #ffe67a;
+}
+
+.timer-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.timer-box strong {
+  color: #ffe04f;
+  font-variant-numeric: tabular-nums;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 16px 0;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: #6e665b;
+  font-weight: 900;
+}
+
+.search-box input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.popular-keywords {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 12px 16px 0;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.popular-keywords::-webkit-scrollbar {
+  display: none;
+}
+
+.popular-keywords button {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: #fff4ca;
+  color: #1f1f1f;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.event-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.event-stack article,
+.order-timeline article {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.event-stack article strong,
+.order-timeline article strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.event-stack article p,
+.order-timeline article p {
+  margin: 0;
+  color: #70685d;
+  line-height: 1.5;
+}
+
+.event-stack button {
+  width: 100%;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 8px;
+  padding: 13px 14px;
+  background: #111;
+  color: #fff;
+  font-weight: 950;
+}
+
+.order-timeline {
+  display: grid;
+  gap: 12px;
+}
+
+.order-timeline article {
+  position: relative;
+  padding-left: 44px;
+}
+
+.order-timeline article::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 21px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e82f2f;
+  box-shadow: 0 0 0 5px #ffe9c9;
 }
 
 .section {
@@ -1119,10 +1257,12 @@ dd {
   bottom: 0;
   z-index: 9;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  min-height: 64px;
+  grid-template-columns: repeat(5, 1fr);
+  min-height: calc(72px + env(safe-area-inset-bottom));
+  padding: 6px 4px calc(8px + env(safe-area-inset-bottom));
   background: #fff;
   border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 18px rgba(31, 27, 18, 0.06);
 }
 
 .bottom-nav.scroll-nav {
@@ -1147,14 +1287,44 @@ dd {
 
 .bottom-nav a {
   display: grid;
+  grid-template-rows: 30px 18px;
   place-items: center;
-  color: #82796c;
-  font-size: 13px;
+  gap: 2px;
+  color: #1f1f1f;
+  font-size: 12px;
   font-weight: 900;
+  line-height: 1;
+  border-radius: 8px;
+  transition: color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.bottom-nav a span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 30px;
+}
+
+.bottom-nav a svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bottom-nav a b {
+  font-size: 12px;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .bottom-nav a.active {
-  color: #111;
+  color: #e82f2f;
+  background: #fff7d7;
+  transform: translateY(-1px);
 }
 
 .toast {
@@ -1312,6 +1482,24 @@ dd {
   background: #111;
   color: #fff;
   font-weight: 950;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  main {
+    animation: pageIn 0.22s ease both;
+  }
+
+  @keyframes pageIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 @media (min-width: 560px) {

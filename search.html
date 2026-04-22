@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>검색 | 프루피</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./data.js"></script>
+    <script defer src="./app.js"></script>
+    <script defer src="./nav.js"></script>
+  </head>
+  <body data-page="search">
+    <header class="topbar">
+      <a class="icon-btn" href="./index.html" aria-label="뒤로">‹</a>
+      <a class="brand" href="./index.html"><img class="logo-mark" src="./logo.svg" alt="" /><span>검색</span></a>
+      <a class="icon-btn" href="./cart.html" aria-label="장바구니">🛒</a>
+    </header>
+    <main>
+      <section class="section">
+        <label class="search-box">
+          <span>⌕</span>
+          <input id="searchInput" type="search" placeholder="과일, 채소를 검색하세요" autofocus />
+        </label>
+        <div class="popular-keywords">
+          <button type="button">참외</button>
+          <button type="button">오렌지</button>
+          <button type="button">고구마</button>
+          <button type="button">타임특가</button>
+        </div>
+      </section>
+      <section class="section">
+        <div class="sort-row"><strong id="searchCount">추천 상품</strong><span>검색결과</span></div>
+        <div class="product-grid wide" id="searchProducts"></div>
+      </section>
+    </main>
+    <nav class="bottom-nav icon-nav" data-bottom-nav aria-label="하단 메뉴"></nav>
+  </body>
+</html>

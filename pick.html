@@ -3,29 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>찜한상품 | 프루피</title>
+    <title>프루피픽 | 프루피</title>
     <link rel="stylesheet" href="./styles.css" />
     <script defer src="./data.js"></script>
     <script defer src="./app.js"></script>
     <script defer src="./nav.js"></script>
   </head>
-  <body data-page="wishlist" data-nav="mypage">
+  <body data-page="category" data-view="pick">
     <header class="topbar">
       <a class="icon-btn" href="./index.html" aria-label="뒤로">‹</a>
-      <a class="brand" href="./index.html" aria-label="프루피 홈">
-        <img src="./logo.svg" alt="" class="brand-logo" />
-        <span>찜한상품</span>
-      </a>
+      <a class="brand" href="./index.html"><img class="logo-mark" src="./logo.svg" alt="" /><span>프루피픽</span></a>
       <a class="icon-btn" href="./cart.html" aria-label="장바구니">🛒</a>
     </header>
-
     <main>
-      <section class="page-head compact">
-        <p>다시 보고 싶은 상품</p>
-        <h1>찜한상품</h1>
+      <section class="page-head">
+        <p>MD가 직접 고른 상품</p>
+        <h1>리뷰와 재구매가 좋은 추천</h1>
       </section>
       <section class="section">
-        <div class="product-list" id="wishlistItems"></div>
+        <div class="sort-row"><strong id="productCount">상품 0개</strong><span>평점순</span></div>
+        <div class="product-grid wide" id="categoryProducts"></div>
       </section>
     </main>
     <nav class="bottom-nav icon-nav" data-bottom-nav aria-label="하단 메뉴"></nav>

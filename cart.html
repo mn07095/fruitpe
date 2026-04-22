@@ -7,54 +7,24 @@
     <link rel="stylesheet" href="./styles.css" />
     <script defer src="./data.js"></script>
     <script defer src="./app.js"></script>
+    <script defer src="./nav.js"></script>
   </head>
   <body data-page="cart">
     <header class="topbar">
       <a class="icon-btn" href="./index.html" aria-label="뒤로">‹</a>
-      <a class="brand" href="./index.html" aria-label="프루피 홈">
-        <span class="logo-mark" aria-hidden="true">
-          <svg viewBox="0 0 96 60" role="img">
-            <path class="logo-face" d="M24 18c2 20 20 32 40 24 8-3 14-9 18-17" />
-            <path class="logo-leaf" d="M17 20c-8-7-16-5-19-3 4 8 12 10 20 6" />
-            <path class="logo-banana" d="M31 42c18 6 42 0 54-21l11 2-1 8-8-1c-8 20-30 30-54 22-8-3-14-7-18-13 6 1 10 2 16 3z" />
-            <circle class="logo-grape" cx="78" cy="34" r="7" />
-            <circle class="logo-grape" cx="88" cy="42" r="7" />
-            <circle class="logo-grape" cx="76" cy="49" r="7" />
-            <circle cx="34" cy="18" r="3.4" />
-            <circle cx="56" cy="17" r="3.4" />
-          </svg>
-        </span>
-        <span>장바구니</span>
-      </a>
+      <a class="brand" href="./index.html"><img class="logo-mark" src="./logo.svg" alt="" /><span>장바구니</span></a>
       <button class="icon-btn" type="button" data-cart-clear aria-label="비우기">×</button>
     </header>
-
     <main>
-      <section class="page-head compact">
-        <p>3만원 이상 무료배송</p>
-        <h1>담은 상품을 확인해주세요</h1>
-      </section>
-
+      <section class="page-head compact"><p>3만원 이상 무료배송</p><h1>담은 상품을 확인해주세요</h1></section>
       <section class="section cart-section">
         <div class="cart-list" id="cartItems"></div>
-        <div class="coupon-box">
-          <div>
-            <strong>첫 구매 쿠폰</strong>
-            <p>상품 금액 15,000원 이상이면 3,000원 할인</p>
-          </div>
-          <button type="button" data-coupon-apply>적용</button>
-        </div>
+        <div class="coupon-box"><div><strong>첫 구매 쿠폰</strong><p>상품 금액 15,000원 이상이면 3,000원 할인</p></div><button type="button" data-coupon-apply>적용</button></div>
         <div class="cart-summary" id="cartSummary"></div>
         <a class="checkout-btn" id="cartCheckout" href="./checkout.html">주문하기</a>
       </section>
-
-      <section class="section soft">
-        <div class="section-title">
-          <h2>함께 담기 좋은 상품</h2>
-          <a href="./category.html">더보기</a>
-        </div>
-        <div class="product-list" id="cartRecommendations"></div>
-      </section>
+      <section class="section soft"><div class="section-title"><h2>함께 담기 좋은 상품</h2><a href="./category.html">더보기</a></div><div class="product-list" id="cartRecommendations"></div></section>
     </main>
+    <nav class="bottom-nav icon-nav" data-bottom-nav aria-label="하단 메뉴"></nav>
   </body>
 </html>
