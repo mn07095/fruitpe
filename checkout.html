@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>주문서 | 프루피</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./data.js"></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body data-page="checkout">
+    <header class="topbar">
+      <a class="icon-btn" href="./cart.html" aria-label="뒤로">‹</a>
+      <a class="brand" href="./index.html" aria-label="프루피 홈">
+        <span class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 96 60" role="img">
+            <path class="logo-face" d="M24 18c2 20 20 32 40 24 8-3 14-9 18-17" />
+            <path class="logo-leaf" d="M17 20c-8-7-16-5-19-3 4 8 12 10 20 6" />
+            <path class="logo-banana" d="M31 42c18 6 42 0 54-21l11 2-1 8-8-1c-8 20-30 30-54 22-8-3-14-7-18-13 6 1 10 2 16 3z" />
+            <circle class="logo-grape" cx="78" cy="34" r="7" />
+            <circle class="logo-grape" cx="88" cy="42" r="7" />
+            <circle class="logo-grape" cx="76" cy="49" r="7" />
+            <circle cx="34" cy="18" r="3.4" />
+            <circle cx="56" cy="17" r="3.4" />
+          </svg>
+        </span>
+        <span>주문서</span>
+      </a>
+      <span class="icon-space"></span>
+    </header>
+
+    <main>
+      <section class="page-head compact">
+        <p>로그인 없이 바로 주문</p>
+        <h1>배송 정보를 확인해주세요</h1>
+      </section>
+      <form class="order-form">
+        <label>받는 분<input type="text" value="프루피 고객" /></label>
+        <label>연락처<input type="tel" value="010-0000-0000" /></label>
+        <label>주소<input type="text" value="서울특별시 싱싱구 과일로 12" /></label>
+        <label>배송 요청사항<textarea>문 앞에 놓아주세요.</textarea></label>
+      </form>
+      <section class="section">
+        <div class="total-box">
+          <span>결제 예정 금액</span>
+          <strong id="checkoutTotal">0원</strong>
+        </div>
+        <button class="checkout-btn" type="button">결제하기</button>
+      </section>
+    </main>
+  </body>
+</html>
