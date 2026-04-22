@@ -60,7 +60,7 @@ const categoryGroups = {
       { label: "제철과일", href: "./category.html?type=fruit&group=season", ids: ["banana", "chamoe", "orange"] },
       { label: "사과/감귤", href: "./category.html?type=fruit&group=apple-citrus", ids: ["apple", "orange"] },
       { label: "포도/베리", href: "./category.html?type=fruit&group=berry", ids: ["grape", "blueberry"] },
-      { label: "키위/망고", href: "./category.html?type=fruit&group=tropical", ids: ["ruby-kiwi", "mango"] }
+      { label: "키위/망고", href: "./category.html?type=fruit&group=tropical", ids: ["kiwi", "mango"] }
     ]
   },
   vegetable: {
