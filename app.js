@@ -136,6 +136,15 @@ function addToCart(id, next = "./cart.html") {
   location.href = next;
 }
 
+function addToCartWithQty(id, qty = 1, next = "./cart.html") {
+  const cart = getCart();
+  const item = cart.find((entry) => entry.id === id);
+  if (item) item.qty += qty;
+  else cart.push({ id, qty });
+  setCart(cart);
+  location.href = next;
+}
+
 function updateCartQty(id, delta) {
   const next = getCart()
     .map((entry) => entry.id === id ? { ...entry, qty: Math.max(1, entry.qty + delta) } : entry)
@@ -221,6 +230,42 @@ function closeMenu() {
 function renderHome() {
   document.querySelector("#bestProducts").innerHTML = products.slice(0, 4).map(card).join("");
   document.querySelector("#dealProducts").innerHTML = products.filter((item) => item.badge === "deal").map(listItem).join("");
+  const shortcut = document.querySelector("#categoryShortcut");
+  if (shortcut) {
+    shortcut.innerHTML = [
+      ["타임특가", "./time-sale.html", "오늘 마감", "banana"],
+      ["과일", "./category.html?type=fruit", "제철 당도 선별", "chamoe"],
+      ["채소", "./category.html?type=vegetable", "샐러드·구이용", "cucumber"],
+      ["베스트", "./category.html?group=best", "후기 많은 상품", "apple"],
+      ["프루피픽", "./pick.html", "MD 추천", "orange"],
+      ["이벤트", "./event.html", "친구초대 리워드", "sweet-potato"]
+    ].map(([label, href, text, id]) => {
+      const product = products.find((item) => item.id === id) || products[0];
+      return `
+        <a href="${href}">
+          <img src="${product.image}" alt="" />
+          <strong>${label}</strong>
+          <span>${text}</span>
+        </a>
+      `;
+    }).join("");
+  }
+  const reviewHighlights = document.querySelector("#reviewHighlights");
+  if (reviewHighlights) {
+    reviewHighlights.innerHTML = [...products]
+      .sort((a, b) => b.reviewCount - a.reviewCount)
+      .slice(0, 3)
+      .map((product) => `
+        <a class="review-highlight-card" href="./product.html?id=${product.id}">
+          <img src="${product.image}" alt="${product.name}" />
+          <div>
+            <strong>${product.name}</strong>
+            <p>★ ${product.rating} · 후기 ${product.reviewCount}개</p>
+            <blockquote>${product.reviews[0][1]}</blockquote>
+          </div>
+        </a>
+      `).join("");
+  }
 }
 
 function renderCategory() {
@@ -348,6 +393,8 @@ function startDealTimer() {
 
 function renderProduct() {
   const product = products.find((item) => item.id === params.get("id")) || products[0];
+  const related = products.filter((item) => item.type === product.type && item.id !== product.id).slice(0, 3);
+  let detailQty = 1;
   document.title = `${product.name} | 프루피`;
   document.querySelector("#productDetail").innerHTML = `
     <section class="detail-hero">
@@ -371,12 +418,34 @@ function renderProduct() {
         <span>신선 책임 보장</span>
         <span>오늘 특가</span>
       </div>
+      <div class="benefit-box">
+        <strong>첫 구매 쿠폰 적용 시 ${won(Math.max(0, product.price - 3000))}</strong>
+        <span>15,000원 이상 구매 시 3,000원 즉시 할인</span>
+        <button type="button" class="copy-btn" data-coupon-apply>쿠폰 적용</button>
+      </div>
       <dl>
         <div><dt>원산지</dt><dd>${product.origin}</dd></div>
         <div><dt>구성</dt><dd>${product.unit}</dd></div>
         <div><dt>보관</dt><dd>${product.storage}</dd></div>
         <div><dt>배송</dt><dd>${product.delivery}</dd></div>
       </dl>
+      <div class="option-panel">
+        <label>옵션 선택
+          <select>
+            <option>${product.name} · ${product.unit}</option>
+            <option>${product.name} 2세트 묶음 · 5% 추가 할인</option>
+          </select>
+        </label>
+        <div class="quantity-row">
+          <span>수량</span>
+          <div>
+            <button type="button" data-detail-qty="-1">−</button>
+            <strong id="detailQty">1</strong>
+            <button type="button" data-detail-qty="1">+</button>
+          </div>
+        </div>
+        <p>예상 결제금액 <strong id="detailTotal">${won(product.price)}</strong></p>
+      </div>
     </section>
 
     <nav class="detail-tabs" aria-label="상품 상세 탭">
@@ -397,6 +466,11 @@ function renderProduct() {
         <h3>프루피 선별 기준</h3>
         <p>입고 당일 외관, 중량, 신선도를 확인하고 배송 중 손상이 적도록 완충 포장합니다.</p>
       </div>
+      <div class="fresh-checklist">
+        <article><strong>01</strong><span>산지 입고</span><p>수확 직후 입고된 상품만 선별합니다.</p></article>
+        <article><strong>02</strong><span>외관 검수</span><p>무름, 상처, 과숙 여부를 한 번 더 확인합니다.</p></article>
+        <article><strong>03</strong><span>맞춤 포장</span><p>과일과 채소별 보관 온도에 맞춰 포장합니다.</p></article>
+      </div>
       <div class="packing-panel">
         <h3>포장 안내</h3>
         <div>
@@ -411,6 +485,22 @@ function renderProduct() {
       <div class="section-title">
         <h2>구매후기</h2>
         <span>평균 ${product.rating}</span>
+      </div>
+      <div class="review-meter">
+        <strong>${product.rating}</strong>
+        <div>
+          <span style="width:${Math.round(product.rating * 20)}%"></span>
+        </div>
+        <p>최근 30일 기준 만족도가 높은 상품입니다.</p>
+      </div>
+      <div class="photo-review-grid">
+        ${product.reviews.slice(0, 3).map(([name, body]) => `
+          <article>
+            <img src="${product.image}" alt="" />
+            <strong>${maskName(name)}</strong>
+            <p>${body}</p>
+          </article>
+        `).join("")}
       </div>
       <div class="review-list">
         ${product.reviews.map(([name, body, date]) => `
@@ -447,12 +537,27 @@ function renderProduct() {
       </div>
     </section>
 
+    <section class="detail-section">
+      <div class="section-title">
+        <h2>함께 많이 담았어요</h2>
+        <a href="./category.html?type=${product.type}">더보기</a>
+      </div>
+      <div class="product-list">
+        ${related.map(listItem).join("")}
+      </div>
+    </section>
+
     <div class="buy-bar">
       <button type="button" class="wish-btn" onclick="toggleWish('${product.id}')">찜하기</button>
-      <button type="button" onclick="addToCart('${product.id}')">장바구니 담기</button>
-      <a href="./checkout.html" onclick="addToCart('${product.id}', './checkout.html'); return false;">바로 구매</a>
+      <button type="button" data-detail-cart="${product.id}">장바구니 담기</button>
+      <a href="./checkout.html" data-detail-buy="${product.id}">바로 구매</a>
     </div>
   `;
+  window.updateDetailQty = (delta) => {
+    detailQty = Math.max(1, detailQty + delta);
+    document.querySelector("#detailQty").textContent = detailQty;
+    document.querySelector("#detailTotal").textContent = won(product.price * detailQty);
+  };
 }
 
 function renderCart() {
@@ -576,6 +681,9 @@ document.addEventListener("click", (event) => {
   const cartClear = target.closest?.("[data-cart-clear]");
   const couponApply = target.closest?.("[data-coupon-apply]");
   const rewardCopy = target.closest?.("[data-reward-copy]");
+  const detailQtyButton = target.closest?.("[data-detail-qty]");
+  const detailCart = target.closest?.("[data-detail-cart]");
+  const detailBuy = target.closest?.("[data-detail-buy]");
 
   if (menuButton) openMenu();
   if (couponButton) {
@@ -593,11 +701,23 @@ document.addEventListener("click", (event) => {
   if (couponApply) {
     localStorage.setItem(couponKey, "true");
     showToast("첫 구매 쿠폰을 적용했어요.");
-    renderCart();
+    couponApply.textContent = "적용완료";
+    couponApply.disabled = true;
+    if (page === "cart") renderCart();
   }
   if (rewardCopy) {
     navigator.clipboard?.writeText(location.origin + location.pathname);
     showToast("리워드 URL을 복사했어요.");
+  }
+  if (detailQtyButton) window.updateDetailQty?.(Number(detailQtyButton.dataset.detailQty));
+  if (detailCart) {
+    const qty = Number(document.querySelector("#detailQty")?.textContent || 1);
+    addToCartWithQty(detailCart.dataset.detailCart, qty);
+  }
+  if (detailBuy) {
+    event.preventDefault();
+    const qty = Number(document.querySelector("#detailQty")?.textContent || 1);
+    addToCartWithQty(detailBuy.dataset.detailBuy, qty, "./checkout.html");
   }
 });
 
