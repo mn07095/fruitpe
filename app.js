@@ -36,6 +36,71 @@ const productImage = (product, className = "product-photo") => `
 
 const badgeText = (product) => (product.badge === "deal" ? "특가" : "베스트");
 
+const categoryGroups = {
+  all: {
+    title: "전체 상품",
+    eyebrow: "산지에서 바로 고른 신선함",
+    lead: "과일과 채소를 한 번에 살펴보고, 타임특가와 베스트 상품까지 빠르게 담아보세요.",
+    stat: "전체",
+    imageId: "banana",
+    subs: [
+      { label: "타임특가", href: "./category.html?group=deal", ids: ["banana", "chamoe", "cucumber", "carrot"] },
+      { label: "베스트", href: "./category.html?group=best", ids: ["apple", "grape", "orange", "sweet-potato"] },
+      { label: "과일", href: "./category.html?type=fruit", ids: ["apple", "banana", "grape", "orange"] },
+      { label: "채소", href: "./category.html?type=vegetable", ids: ["tomato", "cucumber", "sweet-potato", "potato"] }
+    ]
+  },
+  fruit: {
+    title: "과일",
+    eyebrow: "제철 과일 모아보기",
+    lead: "당도, 산지, 보관 상태를 기준으로 고른 과일만 모았습니다.",
+    stat: "과일",
+    imageId: "chamoe",
+    subs: [
+      { label: "제철과일", href: "./category.html?type=fruit&group=season", ids: ["banana", "chamoe", "orange"] },
+      { label: "사과/감귤", href: "./category.html?type=fruit&group=apple-citrus", ids: ["apple", "orange"] },
+      { label: "포도/베리", href: "./category.html?type=fruit&group=berry", ids: ["grape", "blueberry"] },
+      { label: "키위/망고", href: "./category.html?type=fruit&group=tropical", ids: ["ruby-kiwi", "mango"] }
+    ]
+  },
+  vegetable: {
+    title: "채소",
+    eyebrow: "오늘 손질하기 좋은 채소",
+    lead: "샐러드, 구이, 찜까지 바로 쓰기 좋은 채소를 용도별로 나눴습니다.",
+    stat: "채소",
+    imageId: "cucumber",
+    subs: [
+      { label: "샐러드 채소", href: "./category.html?type=vegetable&group=salad", ids: ["tomato", "cucumber"] },
+      { label: "뿌리채소", href: "./category.html?type=vegetable&group=root", ids: ["carrot", "potato", "sweet-potato", "onion"] },
+      { label: "구이/찜", href: "./category.html?type=vegetable&group=roast", ids: ["sweet-potato", "corn", "potato"] },
+      { label: "알뜰 장보기", href: "./category.html?type=vegetable&group=value", ids: ["onion", "carrot", "cucumber"] }
+    ]
+  },
+  deal: {
+    title: "타임특가",
+    eyebrow: "오늘 자정 종료",
+    lead: "할인율이 높은 상품부터 빠르게 볼 수 있는 한정 특가입니다.",
+    stat: "특가",
+    imageId: "banana",
+    subs: []
+  },
+  best: {
+    title: "베스트",
+    eyebrow: "구매후기로 검증",
+    lead: "구매수와 평점이 좋은 상품을 먼저 모았습니다.",
+    stat: "베스트",
+    imageId: "apple",
+    subs: []
+  }
+};
+
+const groupIds = Object.values(categoryGroups)
+  .flatMap((group) => group.subs)
+  .reduce((map, item) => {
+    const group = new URL(item.href, location.href).searchParams.get("group");
+    return group ? { ...map, [group]: item.ids } : map;
+  }, {});
+
 const card = (product) => `
   <a class="product-card" href="./product.html?id=${product.id}">
     ${productImage(product)}
@@ -161,8 +226,14 @@ function renderHome() {
 function renderCategory() {
   const view = document.body.dataset.view;
   const type = params.get("type");
+  const group = params.get("group");
+  const sort = params.get("sort") || "recommend";
   let filtered = type ? products.filter((item) => item.type === type) : products;
-  let title = type === "fruit" ? "과일" : type === "vegetable" ? "채소" : "전체 상품";
+  let key = type === "fruit" ? "fruit" : type === "vegetable" ? "vegetable" : "all";
+  if (group === "deal") key = "deal";
+  if (group === "best") key = "best";
+  let config = categoryGroups[key] || categoryGroups.all;
+  let title = config.title;
 
   if (view === "time-sale") {
     filtered = products.filter((item) => item.badge === "deal").sort((a, b) => b.discount - a.discount);
@@ -174,10 +245,88 @@ function renderCategory() {
     title = "프루피픽";
   }
 
+  if (!view) {
+    if (group === "deal") filtered = products.filter((item) => item.badge === "deal");
+    if (group === "best") filtered = products.filter((item) => item.badge === "best");
+    if (groupIds[group]) filtered = products.filter((item) => groupIds[group].includes(item.id));
+    filtered = sortProducts(filtered, sort);
+    renderCategoryMenu(config, filtered, sort, key, group);
+  }
+
   const titleEl = document.querySelector("#categoryTitle");
   if (titleEl) titleEl.textContent = title;
-  document.querySelector("#productCount").textContent = `상품 ${filtered.length}개`;
-  document.querySelector("#categoryProducts").innerHTML = filtered.map(card).join("");
+  const countEl = document.querySelector("#productCount");
+  if (countEl) countEl.textContent = `상품 ${filtered.length}개`;
+  const productsEl = document.querySelector("#categoryProducts");
+  if (productsEl) productsEl.innerHTML = filtered.map(card).join("");
+}
+
+function sortProducts(items, sort) {
+  const list = [...items];
+  if (sort === "review") return list.sort((a, b) => b.reviewCount - a.reviewCount);
+  if (sort === "discount") return list.sort((a, b) => b.discount - a.discount);
+  if (sort === "price") return list.sort((a, b) => a.price - b.price);
+  return list.sort((a, b) => (b.badge === "deal") - (a.badge === "deal") || b.rating - a.rating);
+}
+
+function renderCategoryMenu(config, filtered, sort, key, group) {
+  document.querySelector("#categoryEyebrow").textContent = config.eyebrow;
+  const summary = document.querySelector("#categorySummary");
+  const feature = document.querySelector("#categoryFeature");
+  const subGrid = document.querySelector("#subCategoryGrid");
+  const curation = document.querySelector("#categoryCuration");
+  const sortButtons = document.querySelector("#sortButtons");
+  const curationTitle = document.querySelector("#curationTitle");
+  const activeLink = group === "deal" || group === "best" ? group : key;
+
+  document.querySelectorAll("[data-category-link]").forEach((link) => {
+    link.classList.toggle("active", link.dataset.categoryLink === activeLink);
+  });
+
+  const featureProduct = products.find((item) => item.id === config.imageId) || filtered[0] || products[0];
+  const best = [...filtered].sort((a, b) => b.reviewCount - a.reviewCount)[0] || featureProduct;
+  summary.innerHTML = `
+    <span>${config.stat} ${filtered.length}개</span>
+    <span>산지직송 ${filtered.length}개</span>
+    <span>평점 ${best.rating}</span>
+  `;
+  feature.innerHTML = `
+    <a href="./product.html?id=${featureProduct.id}">
+      <img src="${featureProduct.image}" alt="${featureProduct.name}" />
+      <span>
+        <b>${config.lead}</b>
+        <em>${featureProduct.name} ${won(featureProduct.price)}</em>
+      </span>
+    </a>
+  `;
+  subGrid.innerHTML = (config.subs.length ? config.subs : [
+    { label: "특가 전체", href: "./time-sale.html", ids: filtered.slice(0, 3).map((item) => item.id) },
+    { label: "구매후기순", href: `${baseCategoryHref()}sort=review`, ids: filtered.slice(0, 3).map((item) => item.id) },
+    { label: "할인율순", href: `${baseCategoryHref()}sort=discount`, ids: filtered.slice(0, 3).map((item) => item.id) }
+  ]).map((item) => {
+    const preview = item.ids.map((id) => products.find((product) => product.id === id)).filter(Boolean).slice(0, 3);
+    return `
+      <a href="${item.href}">
+        <strong>${item.label}</strong>
+        <span>${preview.map((product) => product.name.replace("프루피 ", "")).join(" · ")}</span>
+      </a>
+    `;
+  }).join("");
+  curationTitle.textContent = key === "all" ? "지금 담기 좋은 상품" : `${config.title} 추천 상품`;
+  curation.innerHTML = [...filtered].sort((a, b) => b.discount - a.discount).slice(0, 4).map(listItem).join("");
+  sortButtons.innerHTML = [
+    ["recommend", "추천순"],
+    ["review", "후기순"],
+    ["discount", "할인율순"],
+    ["price", "낮은가격순"]
+  ].map(([value, label]) => `<a class="${sort === value ? "active" : ""}" href="${baseCategoryHref()}sort=${value}">${label}</a>`).join("");
+}
+
+function baseCategoryHref() {
+  const next = new URLSearchParams(location.search);
+  next.delete("sort");
+  const query = next.toString();
+  return `./category.html${query ? `?${query}&` : "?"}`;
 }
 
 function startDealTimer() {

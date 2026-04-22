@@ -66,7 +66,7 @@ const products = [
     id: "ruby-kiwi",
     type: "fruit",
     badge: "deal",
-    name: "제스프리 루비레드키위",
+    name: "제스프리 키위",
     subtitle: "봄 시즌 한정, 붉은 과육의 진한 단맛",
     price: 13900,
     original: 21900,

@@ -16,17 +16,40 @@
       <a class="icon-btn" href="./cart.html" aria-label="장바구니">🛒</a>
     </header>
     <main>
-      <section class="page-head">
-        <p>산지에서 바로 온 신선함</p>
-        <h1 id="categoryTitle">전체 상품</h1>
+      <section class="category-menu">
+        <nav class="category-rail" aria-label="카테고리 대분류">
+          <a data-category-link="all" href="./category.html">전체</a>
+          <a data-category-link="deal" href="./category.html?group=deal">타임특가</a>
+          <a data-category-link="best" href="./category.html?group=best">베스트</a>
+          <a data-category-link="fruit" href="./category.html?type=fruit">과일</a>
+          <a data-category-link="vegetable" href="./category.html?type=vegetable">채소</a>
+          <a data-category-link="event" href="./event.html">이벤트</a>
+        </nav>
+        <section class="category-panel" aria-labelledby="categoryTitle">
+          <p id="categoryEyebrow">산지에서 바로 고른 신선함</p>
+          <h1 id="categoryTitle">전체 상품</h1>
+          <div class="category-summary" id="categorySummary"></div>
+          <div class="category-feature" id="categoryFeature"></div>
+          <div class="subcategory-grid" id="subCategoryGrid"></div>
+        </section>
       </section>
-      <div class="filter-tabs" role="tablist" aria-label="상품 필터">
-        <a href="./category.html">전체</a>
-        <a href="./category.html?type=fruit">과일</a>
-        <a href="./category.html?type=vegetable">채소</a>
-      </div>
+
+      <section class="section category-curation">
+        <div class="section-title">
+          <div>
+            <span>프루피 추천</span>
+            <h2 id="curationTitle">지금 담기 좋은 상품</h2>
+          </div>
+          <a href="./time-sale.html">타임특가</a>
+        </div>
+        <div class="curation-row" id="categoryCuration"></div>
+      </section>
+
       <section class="section">
-        <div class="sort-row"><strong id="productCount">상품 0개</strong><span>추천순</span></div>
+        <div class="sort-row category-sort">
+          <strong id="productCount">상품 0개</strong>
+          <div id="sortButtons" aria-label="상품 정렬"></div>
+        </div>
         <div class="product-grid wide" id="categoryProducts"></div>
       </section>
     </main>
